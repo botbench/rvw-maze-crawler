@@ -1,28 +1,28 @@
 /**
- * CHANGE ME
- * @param link the port number
- * @return true if no error occured, false if it did
+ * A simple wall following route planner
+ * @param currentDirection the current direction
+ * @param cruiseDirection the direction from which we entered the current tile
+ * @param maze pointer to the maze
+ * @param current pointer to the current maze tile
+ * @return the new heading (0-3)
  */
-int planroute(int dir, tMazeTile *maze, tMazeTile *current)
+int planRoute(int currentDirection, int cruiseDirection, tMazeTile *maze, tMazeTile *current)
 {
-  // the cruisDir variable holds the direction in which we entered
-  // the current tile.  Your turns are relative to that.
-
   // go right
-  if (!currentTile->walls[(cruiseDir + 1) % 4])
-    return normaliseHeading((cruiseDir * 90) + 90);
+  if (!current->walls[(cruiseDirection + 1) % 4])
+    return normaliseHeading((cruiseDirection * 90) + 90);
 
   // go straight
-  if (!currentTile->walls[(cruiseDir + 0) % 4])
-    return cruiseDir * 90;
+  if (!current->walls[(cruiseDirection + 0) % 4])
+    return cruiseDirection * 90;
 
   // go left
-  if (!currentTile->walls[(cruiseDir + 3) % 4])
-    return normaliseHeading((cruiseDir * 90) - 90);
+  if (!current->walls[(cruiseDirection + 3) % 4])
+    return normaliseHeading((cruiseDirection * 90) - 90);
 
   // go in reverse
-  if (!currentTile->walls[(cruiseDir + 2) % 4])
-    return normaliseHeading((cruiseDir * 90) - 180);
+  if (!current->walls[(cruiseDirection + 2) % 4])
+    return normaliseHeading((cruiseDirection * 90) - 180);
 
   return 0;
 }

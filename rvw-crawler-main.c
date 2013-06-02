@@ -25,7 +25,11 @@
  * version 0.1
  */
 
+// main include
 #include "rvw-crawler-main.h"
+
+// This includes the wall follower route planner
+#include "planner-wall-follower.h"
 
 /**
  * Task to constantly read the sensors and convert the heading
@@ -132,8 +136,6 @@ task controlMotors
     motor[M_RIGHT] = clip(-100, powerR, 100);
     motor[M_LEFT]  = clip(-100, powerL, 100);
 
-	  //motor[M_RIGHT] = min2(round(requiredPower + currentRelativeHeading * kP), 100);
-	  //motor[M_LEFT] =  min2(round(requiredPower - currentRelativeHeading * kP), 100);
 	  wait1Msec(10);
   }
 }
@@ -198,6 +200,8 @@ void doMainStateBegin()
       maze[x][y].walls[WALL_EAST] =  false;
       maze[x][y].walls[WALL_SOUTH] = false;
       maze[x][y].walls[WALL_WEST] =  false;
+      maze[x][y].x = x;
+      maze[x][y].y = y;
       maze.scannedWalls = 0;
       maze[x][y].distance = 0;
     }
@@ -278,11 +282,11 @@ void doMainStateTurn()
 {
   writeDebugStreamLine("doMainStateTurn");
 
-  int dir = headingToDirection(currentHeading);
+  int currentDirection = headingToDirection(currentHeading);
   int newHeading = requiredHeading;
 
   // Get a new heading from the route planning function
-  newHeading = routePlannerFollowWall(dir, maze, currentTile);
+  newHeading = planRoute(currentDirection, cruiseDir, maze, currentTile);
 
   // Don't bother to do anything if the newHeading is the same
   // as the current one.
@@ -292,7 +296,7 @@ void doMainStateTurn()
     return;
   }
 
-  writeDebugStreamLine("doMainStateTurn: dir: %d, curr: %d, new: %d", dir, currentHeading, newHeading);
+  writeDebugStreamLine("doMainStateTurn: dir: %d, curr: %d, new: %d", currentDirection, currentHeading, newHeading);
   updateMotors(TURN_SPEED, newHeading);
 
   // wait for the turning to be completed.
@@ -575,36 +579,6 @@ float readRelativeHeading(float relativeTarget)
   int _tmpHeading = currentHeading * 10 - relativeTarget * 10 + 1800;
   _tmpHeading = (_tmpHeading >= 0 ? _tmpHeading % 3600 : 3600 - (-10 - _tmpHeading)%3600) - 1800;
   return (float)_tmpHeading / 10.0;
-}
-
-
-/**
- * CHANGE ME
- * @param link the port number
- * @return true if no error occured, false if it did
- */
-int routePlannerFollowWall(int dir, tMazeTile *maze, tMazeTile *current)
-{
-  // the cruisDir variable holds the direction in which we entered
-  // the current tile.  Your turns are relative to that.
-
-  // go right
-  if (!currentTile->walls[(cruiseDir + 1) % 4])
-    return normaliseHeading((cruiseDir * 90) + 90);
-
-  // go straight
-  if (!currentTile->walls[(cruiseDir + 0) % 4])
-    return cruiseDir * 90;
-
-  // go left
-  if (!currentTile->walls[(cruiseDir + 3) % 4])
-    return normaliseHeading((cruiseDir * 90) - 90);
-
-  // go in reverse
-  if (!currentTile->walls[(cruiseDir + 2) % 4])
-    return normaliseHeading((cruiseDir * 90) - 180);
-
-  return 0;
 }
 
 

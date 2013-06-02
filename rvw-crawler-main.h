@@ -56,6 +56,8 @@ struct
   bool walls[4];
   ubyte scannedWalls;
   int distance;
+  int x;
+  int y;
 } tMazeTile;
 
 // A maze is made of X*Y tiles
@@ -127,6 +129,3 @@ int headingToDirection(float heading);
 float normaliseHeading(float abormalHeading);
 float readRelativeHeading(float relativeTarget);
 void doCorrectSide(int desired, int margin);
-
-// Change this one if you want to try out a different route planner
-int routePlannerFollowWall(int dir, tMazeTile *maze, tMazeTile *current);
