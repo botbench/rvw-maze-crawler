@@ -16,13 +16,11 @@
  * Changelog:
  * - 0.1: Initial release
  *
- * License: You may use this code as you wish, provided you give credit where it's due.
+ * License: This code is licensed under GPL v3
  *
  * THIS CODE WILL ONLY WORK WITH ROBOTC VERSION 3.60 AND HIGHER.
-
+ *
  * Xander Soldaat (xander_at_botbench.com)
- * 21 May 2013
- * version 0.1
  */
 
 // main include
